@@ -63,8 +63,7 @@ Nodo *mezclar(Nodo *lista1, Nodo *lista2) {
 
 int longitud_lista(Nodo *lista) {
     int longitud=0;
-    Nodo *aux=NULL;
-    aux = lista;
+    Nodo *aux=lista;
     while (aux!=NULL) {
         longitud++;
         aux = aux->siguiente;
