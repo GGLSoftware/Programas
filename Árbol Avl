@@ -1,0 +1,276 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define Arbol struct arbol
+#define DERECHA 1
+#define IZQUIERDA 0
+
+Arbol{
+	int dato,indice;
+	Arbol*der;
+	Arbol*izq;
+	Arbol*padre;
+};
+
+Arbol*raiz=NULL;
+
+//Rotación Simple a la Izquierda
+void RSI(Arbol* nodo){
+   Arbol*Padre=nodo->padre;
+   Arbol*A=nodo;
+   Arbol*B=A->der;
+   Arbol*C=B->izq;
+   if(Padre!=NULL){
+   	    if(Padre->der==A){
+   	    	Padre->der=B;
+		}else{
+			Padre->izq=B;
+		} 
+   }else{
+   	    raiz=B;
+   } 
+   A->der=C;
+   B->izq=A;
+   A->padre=B;
+   if(C!=NULL)
+    C->padre=A;
+   B->padre=Padre;
+   A->indice=0;
+   B->indice=0;                                                                                      
+}
+
+//Rotación Simple a la Derecha
+void RSD(Arbol*nodo){
+   Arbol*Padre=nodo->padre;
+   Arbol*A=nodo;
+   Arbol*B=A->izq;
+   Arbol*C=B->der;
+   if(Padre!=NULL){
+   	    if(Padre->der==A){
+   	    	Padre->der=B;
+		}else{
+			Padre->izq=B;
+		}
+   }else{
+   	    raiz=B;
+   }     
+   A->izq=C;
+   B->der=A;
+   A->padre=B;
+   if(C!=NULL)
+     C->padre=A;
+   B->padre=Padre;
+   A->indice=0;
+   B->indice=0;                                                                                                                                                                    
+}
+
+//Rotación Doble a la Izquierda
+void RDI(Arbol* nodo){
+   Arbol*Padre=nodo->padre;
+   Arbol*A=nodo;
+   Arbol*B=A->der;
+   Arbol*C=B->izq;
+   Arbol*CI=C->izq;
+   Arbol*CD=C->der;
+   if(Padre!=NULL){
+   	   if(Padre->der==A){
+   	   	  Padre->der=C;
+		}else{
+		  Padre->izq=C;
+		}
+   }else{
+   	raiz=C;
+   } 
+   A->der=CI;
+   B->izq=CD;
+   C->izq=A;
+   C->der=B;
+   C->padre=Padre;
+   A->padre=C;
+   B->padre=C;
+   if(CI!=NULL)  
+     CI->padre = A;
+   if(CD!=NULL)
+     CD->padre = B;
+   switch(C->indice){
+      case -1: A->indice=0;
+               B->indice=1; 
+               break;
+      case 0:  A->indice=0;
+               B->indice=0; 
+               break;
+      case 1:  A->indice=-1;
+               B->indice=0; 
+               break;
+   }
+   C->indice=0;                                                                                                                                                                                                      
+}
+
+//Rotación Doble a la Derecha
+void RDD(Arbol* nodo){
+   Arbol*Padre=nodo->padre;
+   Arbol*A=nodo;
+   Arbol*B=A->izq;
+   Arbol*C=B->der;
+   Arbol*CI=C->izq;
+   Arbol*CD=C->der;
+   if(Padre!=NULL){
+   	   if(Padre->der==A){
+   	   	  Padre->der=C;
+		}else{
+		  Padre->izq=C;
+		}
+   }else{
+   	raiz=C;
+   } 
+   A->der=CI;
+   B->izq=CD;
+   C->izq=B;
+   C->der=A;
+   C->padre=Padre;
+   A->padre=C;
+   B->padre=C;
+   if(CI!=NULL)  
+     CI->padre=B;
+   if(CD!=NULL)
+     CD->padre=A;
+   switch(C->indice){
+      case -1: A->indice=1;
+               B->indice=0; 
+               break;
+      case 0:  A->indice=0;
+               B->indice=0; 
+               break;
+      case 1:  A->indice=0;
+               B->indice=-1; 
+               break;
+   }
+   C->indice=0;                                                                                                                                                                                                      
+}
+
+void Equilibrar(Arbol* nodo, int rama, int dato){
+   int salir = 0;
+   while(nodo!=NULL && salir==0){//
+      if(dato==1){
+        if(rama==IZQUIERDA){
+        	nodo->indice--;
+		}else{
+          nodo->indice++;
+        }
+      }else{
+        if(rama == IZQUIERDA){
+          nodo->indice++; 
+		}else{
+          nodo->indice--;
+        }
+      }
+      if(nodo->indice == 0){
+        salir = 1;  
+      }else if(nodo->indice == -2){ 
+        if(nodo->izq->indice == 1){
+          RDD(nodo); ///////////////////////////////
+        }else{
+          RSD(nodo);  /////////////////////////////7
+        }
+      salir = 1;  
+     }else if(nodo->indice == 2){ 
+        if(nodo->der->indice == -1){
+          RDI(nodo); ////////////////////////////
+        }else{
+          RSI(nodo);////////////////////////////////
+    	}
+      salir = 1;
+      }
+      if(nodo->padre!=NULL){
+        if(nodo->padre->der == nodo){
+          rama = DERECHA;
+        }else{
+          rama = IZQUIERDA;
+        }
+       }
+     nodo = nodo->padre; 
+   }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+}
+
+void Insertar(int dato){
+   Arbol* padre = NULL;
+   Arbol* actual = raiz;
+  while(actual!=NULL && dato!=actual->dato){
+      padre = actual;
+      if(dato < actual->dato){
+       actual = actual->izq;
+      }else if(dato > actual->dato){
+      actual = actual->der;                
+      }
+      }
+  if(actual!=NULL){ 	
+   return;
+}
+  if(padre==NULL){
+      Arbol*nuevo= (Arbol*)malloc(sizeof(Arbol));
+      nuevo->dato = dato;
+      nuevo->izq = nuevo->der = NULL;
+      nuevo->padre = NULL;
+      nuevo->indice = 0;
+      raiz=nuevo;
+  }else if(dato<padre->dato){
+      actual = (Arbol*)malloc(sizeof(Arbol));
+      padre->izq = actual;
+      actual->dato = dato;
+      actual->izq = actual->der = NULL;
+      actual->padre = padre;
+      actual->indice = 0;
+      Equilibrar(padre, IZQUIERDA, 1);
+  }else if(dato > padre->dato){
+      actual = (Arbol*)malloc(sizeof(Arbol));
+      padre->der = actual;
+      actual->dato = dato;
+      actual->izq = actual->der = NULL;
+      actual->padre = padre;
+      actual->indice = 0;
+      Equilibrar(padre, DERECHA, 1);
+  }
+  
+}
+
+void preorden (Arbol*r){
+    if (r!=NULL){
+     printf("%d ",r->dato);
+     preorden(r->izq);
+     preorden(r->der);
+    }
+}
+
+void inorden(Arbol*r){
+	if(r!=NULL){
+		inorden(r->izq);
+		printf("%d ",r->dato);
+		inorden(r->der);
+	}
+}
+
+void postorden (Arbol*r){
+   if (r != NULL){
+    preorden (r->izq);
+    preorden(r->der);
+    printf("%d ",r->dato);
+    }
+}
+
+int main(){
+	int i,dato,N;
+    printf("Datos a ingresar:");
+    scanf("%d",&N);
+    printf("Introduzca %d datos\n",N);
+    for(i=0; i<N; i++){
+    scanf("%d",&dato);
+    Insertar(dato);
+    } 
+    printf("\n Preorden:");
+    preorden(raiz);
+     printf("\nInorden:");
+	inorden(raiz);
+    printf("\n Postorden:");
+    postorden(raiz);
+     
+    return 0;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+  } 
